@@ -1,12 +1,12 @@
 package recipe;
 
+import java.time.Duration;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
-import java.time.Duration;
 
 public class RecipeTestBase {
 
@@ -19,7 +19,7 @@ public class RecipeTestBase {
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         driver.manage().window().maximize();
-        driver.get("https://food-recipe-finder-two.vercel.app/RecipePage/Recipe.html");
+        driver.get("https://recipe-finder-two-murex.vercel.app/RecipePage/Recipe.html");
     }
 
     @AfterEach

@@ -1,5 +1,9 @@
 package login;
 
+import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -14,15 +18,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class SigninSecurityTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private static final String URL = "http://localhost:3000/";
+    private static final String URL = "https://recipe-finder-two-murex.vercel.app/";
 
     private static final String TEST_USERNAME = "testuser123";
     private static final String TEST_PASSWORD = "Test@123";

@@ -1,20 +1,20 @@
 package recipeDescription;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 public class RecipeDescriptionTestBase {
     protected WebDriver driver;
     protected WebDriverWait wait;
 
     protected static final String RECIPE_DESCRIPTION_URL =
-            "https://food-recipe-finder-two.vercel.app/RecipeViewPageOverAll/RecipeViewPage/RecipeViewPage.html";
+            "https://recipe-finder-two-murex.vercel.app/RecipeViewPageOverAll/RecipeViewPage/RecipeViewPage.html";
 
     protected static final String RECIPE_NAME = "Avakai Chicken Biryani";
     protected static final String COMMENT = "This recipe looks delicious!";

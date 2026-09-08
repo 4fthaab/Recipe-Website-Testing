@@ -1,5 +1,7 @@
 package search;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
@@ -9,15 +11,13 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
 public abstract class SearchTestBase {
 
     protected WebDriver driver;
     protected WebDriverWait wait;
 
     protected static final String SEARCH_PAGE_URL =
-            "https://food-recipe-finder-two.vercel.app/Searchpage/Searchpage/api.html";
+            "https://recipe-finder-two-murex.vercel.app/Searchpage/Searchpage/api.html";
 
     @BeforeEach
     void setUp() {

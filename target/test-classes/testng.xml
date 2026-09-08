@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="TestNG Test Suite">
+
+    <test name="Home Tests">
+        <classes>
+            <class name="home.HomepageChromeTest"/>
+            <class name="home.HomepageFirefoxTest"/>
+            <class name="home.HomepageFunctionalTestSuite"/>
+            <class name="home.HomepageNavigationTestSuite"/>
+            <class name="home.HomepageNegativeTest"/>
+            <class name="home.HomepageUiTest"/>
+        </classes>
+    </test>
+
+    <test name="Login Tests">
+        <classes>
+            <class name="login.SigninFunctionalTest"/>
+            <class name="login.SigninSecurityTest"/>
+            <class name="login.SigninValidationTest"/>
+        </classes>
+    </test>
+
+    <test name="Signup Tests">
+        <classes>
+            <class name="signup.SignupFunctionalTest"/>
+            <class name="signup.SignupSecurityTest"/>
+            <class name="signup.SignupUiTest"/>
+            <class name="signup.SignupUsabilityTest"/>
+            <class name="signup.SignupValidationNegativeTest"/>
+        </classes>
+    </test>
+
+</suite>

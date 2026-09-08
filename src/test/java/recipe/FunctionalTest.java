@@ -1,6 +1,12 @@
 package recipe;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,7 +27,7 @@ public class FunctionalTest extends RecipeTestBase {
 
     @BeforeEach
     void openRecipePage() {
-        driver.get("https://food-recipe-finder-two.vercel.app/RecipePage/Recipe.html");
+        driver.get("https://recipe-finder-two-murex.vercel.app/RecipePage/Recipe.html");
         wait.until(ExpectedConditions.urlContains("/RecipePage/Recipe.html"));
     }
 

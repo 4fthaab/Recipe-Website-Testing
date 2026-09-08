@@ -23,7 +23,7 @@ public class SignupSecurityTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private static final String URL = "http://localhost:3000/";
+    private static final String URL = "https://recipe-finder-two-murex.vercel.app/";
 
     private static final String TEST_USERNAME = "testuser123";
     private static final String TEST_EMAIL = "test@example.com";

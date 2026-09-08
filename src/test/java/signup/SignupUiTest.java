@@ -19,7 +19,7 @@ public class SignupUiTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private static final String URL = "http://localhost:3000/";
+    private static final String URL = "https://recipe-finder-two-murex.vercel.app/";
 
     // Stores Test ID -> Result Status (PASSED / FAILED / SKIPPED)
     private static final Map<String, String> testResults = new LinkedHashMap<>();
