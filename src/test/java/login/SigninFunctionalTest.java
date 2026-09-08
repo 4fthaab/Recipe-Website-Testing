@@ -1,6 +1,10 @@
 package login;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,7 +23,7 @@ public class SigninFunctionalTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private static final String URL = "http://localhost:3000/";
+    private static final String URL = "https://recipe-finder-two-murex.vercel.app/index.html";
 
     private static final String TEST_USERNAME = "testuser123";
     private static final String TEST_EMAIL = "testuser123@gmail.com";
@@ -153,27 +157,23 @@ public class SigninFunctionalTest {
 
     @Test(priority = 5, description = "SI-F-005: Social Sign-In Options")
     public void testSocialSignInOptions() throws InterruptedException {
-        By[] socialButtons = {
+        WebElement socialButton = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("/html/body/div/div/div[1]/div[2]/div/div/div/i[2]")
-        };
+        ));
 
-        for (By buttonLocator : socialButtons) {
-            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(buttonLocator));
+        String initialUrl = driver.getCurrentUrl();
+        int initialWindowCount = driver.getWindowHandles().size();
 
-            Thread.sleep(1000); // Visual pause before clicking social icon
-            button.click();
+        socialButton.click();
+        Thread.sleep(1500);
 
-            try {
-                Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-                Thread.sleep(1000);
-                alert.accept();
-            } catch (Exception e) {
-                // Ignore if no alert is triggered by social button
-            }
-        }
+        // Verify if either a new tab opened OR the page navigated
+        boolean navigationOccurred = (driver.getWindowHandles().size() > initialWindowCount)
+                || !driver.getCurrentUrl().equals(initialUrl);
 
-        Thread.sleep(2000); // Visual pause after interaction
+        Assert.assertTrue(navigationOccurred, "FAIL: Clicking the social sign-in icon did not trigger any navigation or open a link.");
     }
+
 
     // ==========================================
     // EXECUTION LOGGING & FINAL SUMMARY REPORT
