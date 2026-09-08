@@ -4,14 +4,13 @@
 
 <suite name="TestNG Test Suite">
 
-    <test name="Home Tests">
+    <test name="Signup Tests">
         <classes>
-            <class name="home.HomepageChromeTest"/>
-            <class name="home.HomepageFirefoxTest"/>
-            <class name="home.HomepageFunctionalTestSuite"/>
-            <class name="home.HomepageNavigationTestSuite"/>
-            <class name="home.HomepageNegativeTest"/>
-            <class name="home.HomepageUiTest"/>
+            <class name="signup.SignupFunctionalTest"/>
+            <class name="signup.SignupSecurityTest"/>
+            <class name="signup.SignupUiTest"/>
+            <class name="signup.SignupUsabilityTest"/>
+            <class name="signup.SignupValidationNegativeTest"/>
         </classes>
     </test>
 
@@ -23,13 +22,14 @@
         </classes>
     </test>
 
-    <test name="Signup Tests">
+    <test name="Home Tests">
         <classes>
-            <class name="signup.SignupFunctionalTest"/>
-            <class name="signup.SignupSecurityTest"/>
-            <class name="signup.SignupUiTest"/>
-            <class name="signup.SignupUsabilityTest"/>
-            <class name="signup.SignupValidationNegativeTest"/>
+            <class name="home.HomepageChromeTest"/>
+            <class name="home.HomepageFirefoxTest"/>
+            <class name="home.HomepageFunctionalTestSuite"/>
+            <class name="home.HomepageNavigationTestSuite"/>
+            <class name="home.HomepageNegativeTest"/>
+            <class name="home.HomepageUiTest"/>
         </classes>
     </test>
 
