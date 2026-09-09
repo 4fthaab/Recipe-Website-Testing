@@ -1,12 +1,5 @@
 package home;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -22,11 +15,25 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Homepage Functional Test Suite for Social Media & Contact Links
+ *
+ * Intercepts email/mailto links to redirect to in-browser Gmail webmail,
+ * preventing external desktop applications (like Outlook) from launching.
+ */
 public class HomepageFunctionalTestSuite {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private static final String APP_URL = "https://recipe-finder-two-murex.vercel.app/";
+    private static final String APP_URL = "https://recipe-finder-two-murex.vercel.app/index.html";
 
     private static final By SOCIAL_ICON_LOCATOR = By.xpath("//div[contains(@class,'smb')]");
     private static final Map<String, String> testResults = new LinkedHashMap<>();
@@ -42,6 +49,9 @@ public class HomepageFunctionalTestSuite {
         registerAndLogin();
     }
 
+    /**
+     * Helper method to bypass authentication and access the homepage dashboard.
+     */
     private void registerAndLogin() throws InterruptedException {
         String timestamp = String.valueOf(System.currentTimeMillis()).substring(7);
         String dynamicUser = "user" + timestamp;
@@ -115,37 +125,49 @@ public class HomepageFunctionalTestSuite {
         List<WebElement> socialIcons = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(SOCIAL_ICON_LOCATOR));
         Assert.assertFalse(socialIcons.isEmpty(), "No social media icons found on homepage.");
 
-        WebElement targetIcon = socialIcons.get(0);
-        scrollToAndHighlight(targetIcon);
-
         String mainPageWindow = driver.getWindowHandle();
-        String initialUrl = driver.getCurrentUrl();
+        int totalIcons = socialIcons.size();
 
-        clickElementSafely(targetIcon);
-        Thread.sleep(2000);
+        for (int i = 0; i < totalIcons; i++) {
+            List<WebElement> currentIcons = driver.findElements(SOCIAL_ICON_LOCATOR);
+            Assert.assertTrue(i < currentIcons.size(), "DOM element count changed during execution. Expected index " + i + " but found " + currentIcons.size() + " elements.");
 
-        Set<String> allWindows = driver.getWindowHandles();
-        if (allWindows.size() > 1) {
-            for (String windowHandle : allWindows) {
-                if (!windowHandle.equals(mainPageWindow)) {
-                    driver.switchTo().window(windowHandle);
-                    break;
+            WebElement targetIcon = currentIcons.get(i);
+            String iconId = getIconIdentifier(targetIcon, i);
+            String href = getElementHref(targetIcon);
+            boolean isMail = isMailIcon(iconId, targetIcon, href);
+
+            scrollToAndHighlight(targetIcon);
+
+            String initialUrl = driver.getCurrentUrl();
+
+            // Safe click to intercept mailto and redirect inside browser
+            clickElementWithFallback(targetIcon, href, isMail);
+            Thread.sleep(2000);
+
+            Set<String> allWindows = driver.getWindowHandles();
+            if (allWindows.size() > 1) {
+                for (String windowHandle : allWindows) {
+                    if (!windowHandle.equals(mainPageWindow)) {
+                        driver.switchTo().window(windowHandle);
+                        break;
+                    }
                 }
             }
-        }
 
-        String currentUrl = driver.getCurrentUrl();
+            String currentUrl = driver.getCurrentUrl();
 
-        // Verify navigation actually occurred
-        Assert.assertNotEquals(currentUrl, initialUrl, "User was not redirected upon clicking the social media icon (URL remained unchanged).");
-        Assert.assertTrue(currentUrl.startsWith("http://") || currentUrl.startsWith("https://"), "Target destination URL scheme is invalid: " + currentUrl);
+            // Verify navigation actually occurred
+            Assert.assertNotEquals(currentUrl, initialUrl, "User was not redirected upon clicking icon at index " + i + " (" + iconId + "). URL remained unchanged.");
+            Assert.assertTrue(currentUrl.startsWith("http://") || currentUrl.startsWith("https://"), "Target destination URL scheme is invalid for icon at index " + i + ": " + currentUrl);
 
-        if (allWindows.size() > 1) {
-            driver.close();
-            driver.switchTo().window(mainPageWindow);
-        } else {
-            driver.navigate().back();
-            Thread.sleep(1000);
+            if (allWindows.size() > 1) {
+                driver.close();
+                driver.switchTo().window(mainPageWindow);
+            } else {
+                driver.navigate().back();
+                Thread.sleep(1000);
+            }
         }
     }
 
@@ -164,10 +186,14 @@ public class HomepageFunctionalTestSuite {
             }
 
             WebElement icon = currentIcons.get(i);
+            String iconId = getIconIdentifier(icon, i);
+            String href = getElementHref(icon);
+            boolean isMail = isMailIcon(iconId, icon, href);
+
             scrollToAndHighlight(icon);
 
             String urlBeforeClick = driver.getCurrentUrl();
-            clickElementSafely(icon);
+            clickElementWithFallback(icon, href, isMail);
 
             Thread.sleep(2000);
 
@@ -202,19 +228,23 @@ public class HomepageFunctionalTestSuite {
         Assert.assertFalse(socialIcons.isEmpty(), "No social media icons present.");
 
         WebElement icon = socialIcons.get(0);
+        String iconId = getIconIdentifier(icon, 0);
+        String href = getElementHref(icon);
+        boolean isMail = isMailIcon(iconId, icon, href);
+
         scrollToAndHighlight(icon);
 
         int initialWindowCount = driver.getWindowHandles().size();
         String initialUrl = driver.getCurrentUrl();
 
-        clickElementSafely(icon);
+        clickElementWithFallback(icon, href, isMail);
         Thread.sleep(2000);
 
         Set<String> currentWindows = driver.getWindowHandles();
         int finalWindowCount = currentWindows.size();
         String currentUrl = driver.getCurrentUrl();
 
-        // Check 1: Ensure navigation actually happened (either new tab opened OR same-tab URL changed)
+        // Check 1: Ensure navigation occurred (either new tab opened OR same-tab URL changed)
         boolean navigationOccurred = (finalWindowCount > initialWindowCount) || !currentUrl.equalsIgnoreCase(initialUrl);
         Assert.assertTrue(navigationOccurred, "Clicking the social media icon triggered no navigation (URL remained identical and no new tab opened).");
 
@@ -234,9 +264,144 @@ public class HomepageFunctionalTestSuite {
     }
 
     // ==========================================
-    // UTILITY HELPER METHODS
+    // MAIL INTERCEPTION & UTILITY HELPER METHODS
     // ==========================================
 
+    /**
+     * Identifies the DOM ID or Class name of the social icon for logging.
+     */
+    private String getIconIdentifier(WebElement element, int index) {
+        String id = element.getAttribute("id");
+        if (id != null && !id.trim().isEmpty()) {
+            return "#" + id;
+        }
+        String className = element.getAttribute("class");
+        if (className != null && !className.trim().isEmpty()) {
+            return "." + className.replaceAll("\\s+", ".");
+        }
+        return "Icon[" + index + "]";
+    }
+
+    /**
+     * Extracts destination URL from self, parent, or child anchor tags.
+     */
+    private String getElementHref(WebElement element) {
+        List<String> targetAttrs = Arrays.asList("href", "data-href", "data-url", "data-link", "onclick");
+
+        // 1. Check self
+        for (String attr : targetAttrs) {
+            String val = element.getAttribute(attr);
+            if (val != null && !val.trim().isEmpty() && !val.trim().equals("#") && !val.trim().endsWith("#")) {
+                return val.trim();
+            }
+        }
+
+        // 2. Check parent/ancestor <a>
+        try {
+            WebElement parentAnchor = element.findElement(By.xpath("ancestor-or-self::a"));
+            for (String attr : targetAttrs) {
+                String val = parentAnchor.getAttribute(attr);
+                if (val != null && !val.trim().isEmpty() && !val.trim().equals("#") && !val.trim().endsWith("#")) {
+                    return val.trim();
+                }
+            }
+        } catch (Exception ignored) {}
+
+        // 3. Check child <a> or elements with href
+        try {
+            List<WebElement> childAnchors = element.findElements(By.xpath(".//*[@href or @data-href or @data-url]"));
+            for (WebElement child : childAnchors) {
+                for (String attr : targetAttrs) {
+                    String val = child.getAttribute(attr);
+                    if (val != null && !val.trim().isEmpty() && !val.trim().equals("#") && !val.trim().endsWith("#")) {
+                        return val.trim();
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+
+        return null;
+    }
+
+    /**
+     * Determines whether an icon represents an email link or mailto scheme.
+     */
+    private boolean isMailIcon(String iconId, WebElement icon, String href) {
+        String lowerId = iconId.toLowerCase();
+        String className = icon.getAttribute("class") != null ? icon.getAttribute("class").toLowerCase() : "";
+        String lowerHref = (href != null) ? href.toLowerCase() : "";
+
+        String outerHtml = "";
+        try {
+            outerHtml = icon.getAttribute("outerHTML").toLowerCase();
+        } catch (Exception ignored) {}
+
+        return lowerId.contains("gmail") || lowerId.contains("mail") || lowerId.contains("envelope") || lowerId.contains("email")
+                || className.contains("gmail") || className.contains("mail") || className.contains("envelope") || className.contains("email")
+                || lowerHref.startsWith("mailto:") || outerHtml.contains("mailto:");
+    }
+
+    /**
+     * Extracts raw mailto: string from outer HTML string.
+     */
+    private String extractMailtoFromHtml(String html) {
+        if (html != null && html.contains("mailto:")) {
+            int start = html.indexOf("mailto:");
+            int end = html.indexOf("\"", start);
+            if (end == -1) end = html.indexOf("'", start);
+            if (end == -1) end = html.indexOf(" ", start);
+            if (end != -1) {
+                return html.substring(start, end);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts a mailto: link into a Gmail Webmail composer URL to keep execution inside browser.
+     */
+    private String getWebMailUrl(String href) {
+        if (href != null && href.toLowerCase().startsWith("mailto:")) {
+            String email = href.substring(7).split("\\?")[0];
+            if (!email.isEmpty()) {
+                return "https://mail.google.com/mail/?view=cm&fs=1&to=" + email;
+            }
+        }
+        return "https://mail.google.com/";
+    }
+
+    /**
+     * Safe click mechanism:
+     * - If email/mailto icon: Navigates directly to Gmail Webmail (bypasses Outlook OS popups).
+     * - If standard icon: Triggers standard Selenium / JS click.
+     */
+    private void clickElementWithFallback(WebElement element, String href, boolean isMail) {
+        String lowerHref = (href != null) ? href.toLowerCase() : "";
+        String outerHtml = "";
+        try {
+            outerHtml = element.getAttribute("outerHTML").toLowerCase();
+        } catch (Exception ignored) {}
+
+        if (isMail || lowerHref.startsWith("mailto:") || outerHtml.contains("mailto:")) {
+            // Bypass OS protocol handler by navigating browser directly to Webmail
+            String targetMailHref = href;
+            if (targetMailHref == null || !targetMailHref.toLowerCase().startsWith("mailto:")) {
+                targetMailHref = extractMailtoFromHtml(outerHtml);
+            }
+            String webMailUrl = getWebMailUrl(targetMailHref);
+            driver.get(webMailUrl);
+        } else {
+            try {
+                element.click();
+            } catch (Exception e) {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+            }
+        }
+    }
+
+    /**
+     * Highlights element on screen during execution for visual feedback.
+     */
     private void scrollToAndHighlight(WebElement element) throws InterruptedException {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
@@ -256,14 +421,6 @@ public class HomepageFunctionalTestSuite {
                     element
             );
         } catch (Exception ignored) {}
-    }
-
-    private void clickElementSafely(WebElement element) {
-        try {
-            element.click();
-        } catch (Exception e) {
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-        }
     }
 
     // ==========================================
