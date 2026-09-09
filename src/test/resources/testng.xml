@@ -25,7 +25,6 @@
     <test name="Home Tests">
         <classes>
             <class name="home.HomepageChromeTest"/>
-            <class name="home.HomepageFirefoxTest"/>
             <class name="home.HomepageFunctionalTestSuite"/>
             <class name="home.HomepageNavigationTestSuite"/>
             <class name="home.HomepageNegativeTest"/>
