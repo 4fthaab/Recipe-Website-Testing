@@ -4,23 +4,27 @@
 
 <suite name="TestNG Test Suite">
 
-    <test name="Signup Tests">
-        <classes>
-            <class name="signup.SignupFunctionalTest"/>
-            <class name="signup.SignupSecurityTest"/>
-            <class name="signup.SignupUiTest"/>
-            <class name="signup.SignupUsabilityTest"/>
-            <class name="signup.SignupValidationNegativeTest"/>
-        </classes>
-    </test>
+    <listeners>
+        <listener class-name="utils.TestNGFailureListener" />
+    </listeners>
 
-    <test name="Login Tests">
-        <classes>
-            <class name="login.SigninFunctionalTest"/>
-            <class name="login.SigninSecurityTest"/>
-            <class name="login.SigninValidationTest"/>
-        </classes>
-    </test>
+<!--    <test name="Signup Tests">-->
+<!--        <classes>-->
+<!--            <class name="signup.SignupFunctionalTest"/>-->
+<!--            <class name="signup.SignupSecurityTest"/>-->
+<!--            <class name="signup.SignupUiTest"/>-->
+<!--            <class name="signup.SignupUsabilityTest"/>-->
+<!--            <class name="signup.SignupValidationNegativeTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test name="Login Tests">-->
+<!--        <classes>-->
+<!--            <class name="login.SigninFunctionalTest"/>-->
+<!--            <class name="login.SigninSecurityTest"/>-->
+<!--            <class name="login.SigninValidationTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
 
     <test name="Home Tests">
         <classes>

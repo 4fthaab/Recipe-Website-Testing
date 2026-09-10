@@ -4,10 +4,13 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.JUnitFailureWatcher;
 
+@ExtendWith(JUnitFailureWatcher.class)
 public class RecipeTestBase {
 
     protected WebDriver driver;
