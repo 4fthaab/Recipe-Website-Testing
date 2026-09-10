@@ -1,6 +1,7 @@
 
 # Maven build output
 target/
+<<<<<<< HEAD
 
 # IntelliJ IDEA
 .idea/
@@ -12,3 +13,6 @@ target/
 # Test output
 surefire-reports/
 failsafe-reports/
+=======
+*.imlgi
+>>>>>>> 2c4983d ( added listeners and screenshot module with a html report)
